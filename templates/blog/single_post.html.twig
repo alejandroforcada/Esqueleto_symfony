@@ -10,7 +10,7 @@
     <!-- Full Article -->
       <div class="row">
       <div class="post-heading">
-        <img class="img-responsive" src="{{ asset('images/blog/' ~ post.image) }}" alt="{{post.title}}">
+        <img class="img-responsive" src="{{ asset('images/index/gallery/' ~ post.image) }}" alt="{{post.title}}">
       </div>
       <h2>{{post.title}}</h2>
       <hr class="subtitle">
@@ -27,19 +27,20 @@
           <li><a href="{{ path('post_like', {slug: post.slug}) }}">LIKE</a> <i class="fa fa-heart sr-icons"></i> {{post.numLikes}}</li>
         </ul>
       </div>
+     {#
       <div class="col-xs-12 col-sm-3">
         <h4>Recent Post</h4>
         <hr class="subtitle1">
         {% for recent in recents %}
         {{ include ('partials/recent_post.html.twig', {'recent': recent}) }}
         {% endfor %}
-      </div>
+      </div>#}
       </div>
       </div>
     <!-- End of Full Article -->
 
     <!-- Comments -->
-      <div class="row">
+      {# <div class="row">
       <div class="col-xs-12 col-sm-12 block2">
         {% for comment in post.comments %}
         {{ include ('partials/comment.html.twig', {'comment': comment}) }}
@@ -48,10 +49,10 @@
             {{ include ('partials/form_comment.html.twig') }}
           </div>
       </div>
-      </div>
+      </div>#}
     <!-- End of Comments -->  
      </div>
-      {% endif %}
+      {% endif %} 
 
    </div>
 <!-- End of Principal Content Start -->
