@@ -132,6 +132,13 @@ class Post
         return $this;
     }
 
+    public function addLike():self
+    {
+        $this->NumLikes++;
+        
+        return $this;
+    }
+
     public function getNumComments(): ?string
     {
         return $this->NumComments;

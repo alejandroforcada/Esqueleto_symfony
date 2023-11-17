@@ -22,7 +22,22 @@ class BlogController extends AbstractController
     #[Route("/blog/buscar/{page}", name: 'blog_buscar')]
     public function buscar(ManagerRegistry $doctrine,  Request $request, int $page = 1): Response
     {
-       return new Response("Buscar");
+        $repositorio=$doctrine->getRepository(Post::class);
+        $searchterm=$request ->query->get ("searchTerm") ?? "";
+        $posts=null;
+        if(!empty($searchterm)){
+            $posts = $repositorio->findByText($request->query->get("searchTerm")?? "");
+            return $this->render('blog/blog.html.twig', [
+                'posts' => $posts,
+            ]);
+        }
+        else{
+            return new Response ("No se encontro nada");
+        }
+        
+
+        
+
     } 
    
     #[Route("/blog/new", name: 'new_post')]
@@ -74,9 +89,15 @@ class BlogController extends AbstractController
     }
     
     #[Route("/single_post/{slug}/like", name: 'post_like')]
-    public function like(ManagerRegistry $doctrine, $slug): Response
+    public function like(ManagerRegistry $doctrine, $slug, EntityManagerInterface $entityManager): Response
     {
-        return new Response("like");
+        $repositorio=$doctrine->getRepository(Post::class);
+        $post= $repositorio->findOneBy(['Slug'=>$slug]);
+        $post-> addLike();
+        $entityManager->persist($post);
+        $entityManager->flush();
+        return $this->redirectToRoute('blog');
+       
 
     }
 
@@ -98,4 +119,29 @@ class BlogController extends AbstractController
         return $this->render('blog/single_post.html.twig', [
             'post' => $post,]);
     }
+
+    #[Route("/comment", name: 'comment')]
+    public function newComment(ManagerRegistry $doctrine, Request $request, SluggerInterface $slugger,  EntityManagerInterface $entityManager): Response
+    {   
+        $user=$this->getUser();
+        $comment= new Comment();
+        $formulario = $this->createForm(CommentFormType::class, $post);
+        $formulario->handleRequest($request);
+        $comment=$formulario->getData();
+        $post->setImage($newFilename);
+        $post->setSlug($slugger->slug($post->getTitle()));
+        $post->setNumLikes(0);
+        $post->setNumViews(0);
+        $post->setNumComments(0);
+        $post->setUser($user);
+
+        $entityManager->persist($post);
+        $entityManager->flush();
+        // do anything else you need here, like send an email
+        
+
+        return $this->render('partials/form_comment.html.twig', [
+            'form' => $formulario->createView(),
+        ]);
+}
 }

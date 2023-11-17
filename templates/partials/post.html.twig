@@ -12,7 +12,7 @@
     <div class="post-footer">
         <a class="btn" href="{{ path('single_post', {'slug':post.slug}) }}">READ MORE...</a>
         <span>
-        <i class="fa fa-heart sr-icons"></i> {{post.numLikes}}
+        <a href="{{ path('post_like',{'slug':post.slug}) }}"> <i class="fa fa-heart sr-icons"></i> {{post.numLikes}}</a>
         <i class="fa fa-comments sr-icons"></i> {{post.numComments}}
         </span>
     </div>
