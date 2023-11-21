@@ -101,41 +101,60 @@ class BlogController extends AbstractController
 
     }
 
-    #[Route("/blog", name: 'blog')]
-    public function index(ManagerRegistry $doctrine): Response
+    #[Route("/blog/{page}", name: 'blog')]
+    public function index(ManagerRegistry $doctrine, int $page = 1): Response
     {
         $repository = $doctrine->getRepository(Post::class);
-        $posts = $repository->findAll();
-        
+        $posts = $repository->findAllPaginated($page);
+        $recents = $repository->findRecents();
+    
         return $this->render('blog/blog.html.twig', [
             'posts' => $posts,
+            'recents'=> $recents,
         ]);
     }
 
     #[Route("/single_post/{slug}", name: 'single_post')]
     public function post(ManagerRegistry $doctrine, Request $request, $slug): Response
-    {   $repositorio=$doctrine->getRepository(Post::class);
-        $post= $repositorio->findOneBy(['Slug'=>$slug]);
+    {
+        $repository = $doctrine->getRepository(Post::class);
+        $post = $repository->findOneBy(["Slug"=>$slug]);
+        $recents = $repository->findRecents();
+        $comment = new Comment();
+        $form = $this->createForm(CommentFormType::class, $comment);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $comment = $form->getData();
+            $comment->setPost($post);  
+            //Aumentamos en 1 el número de comentarios del post
+            $post->setNumComments($post->getNumComments() + 1);
+            $entityManager = $doctrine->getManager();    
+            $entityManager->persist($comment);
+            $entityManager->flush();
+            return $this->redirectToRoute('single_post', ["slug" => $post->getSlug()]);
+        }
         return $this->render('blog/single_post.html.twig', [
-            'post' => $post,]);
+            'post' => $post,
+            'recents' => $recents,
+            'commentForm' => $form->createView()
+        ]);
     }
 
-    #[Route("/comment", name: 'comment')]
+    #[Route("/newcomment/{slug}", name: 'new_comment')]
     public function newComment(ManagerRegistry $doctrine, Request $request, SluggerInterface $slugger,  EntityManagerInterface $entityManager): Response
     {   
         $user=$this->getUser();
         $comment= new Comment();
+        $repositorio=$doctrine->getRepository(Post::class);
+        $post= $repositorio->findOneBy(['Slug'=>$slug]);
         $formulario = $this->createForm(CommentFormType::class, $post);
         $formulario->handleRequest($request);
         $comment=$formulario->getData();
-        $post->setImage($newFilename);
-        $post->setSlug($slugger->slug($post->getTitle()));
-        $post->setNumLikes(0);
-        $post->setNumViews(0);
-        $post->setNumComments(0);
-        $post->setUser($user);
+    
+        $comment->setUser($user);
+        $comment->setPost($slug);
 
-        $entityManager->persist($post);
+        $entityManager->persist($comment);
         $entityManager->flush();
         // do anything else you need here, like send an email
         

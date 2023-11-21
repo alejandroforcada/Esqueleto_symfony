@@ -43,8 +43,7 @@ class Paginator
     {
         $this->currentPage = max(1, $page);
         $firstResult = ($this->currentPage - 1) * $this->pageSize;
-
-        $query = $this->queryBuilder
+        $query = $this->queryBuilder    
         ->setFirstResult($firstResult)
         ->setMaxResults($this->pageSize)
         ->getQuery();

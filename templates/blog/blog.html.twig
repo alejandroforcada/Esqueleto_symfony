@@ -9,21 +9,38 @@
       <!-- Blocks of Posts -->
         <div class="col-xs-12 col-sm-8 row">
         {% if posts %}
-                  {% for post in posts %}
-                  {{ include ('partials/post.html.twig', {'post':post})}}
-           {% endfor %}
+                {% for post in posts.results %}
+              {{ include ('partials/post.html.twig', {'post': post}) }}
+{% endfor %}
+
+           
            {% endif %}
-              <nav class="text-left">
-                <ul class="pagination">
-                  <li class="active"><a href="#">1</a></li>
-                  <li><a href="#">2</a></li>
-                  <li><a href="#">3</a></li>
-                  <li><a href="#" aria-label="suivant">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a></li>
-                </ul>
-              </nav>
-        </div>
+           {% if posts.hasToPaginate %}
+    <div class="text-left">
+        <ul class="pagination">
+            {% if posts.hasPreviousPage %}
+                <li class="prev"><a href="{{ path('blog', {page: posts.previousPage}) }}" rel="previous"><i class="fa fw fa-long-arrow-left"></i> Previous</a></li>
+            {% else %}
+                <li class="prev disabled"><span><i class="fa fw fa-arrow-left"></i> Previous </span></li>
+            {% endif %}
+
+            {% for i in 1..posts.lastPage %}
+                {% if i == posts.currentPage %}
+                    <li class="active"><span>{{ i }}</span></li>
+                {% else %}
+                    <li><a href="{{ path('blog', {page: i}) }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if posts.hasNextPage %}
+                <li class="next"><a href="{{ path('blog', {page: posts.nextPage}) }}" rel="next">Next <i class="fa fw fa-arrow-right"></i></a></li>
+            {% else %}
+                <li class="next disabled"><span>Next <i class="fa fw fa-arrow-right"></i></span></li>
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+      </div>
       <!-- End of Blog Post -->  
 
       <!-- Side bar -->  
@@ -53,10 +70,10 @@
            </div>
             <h3>Recent Posts</h3>
             <hr>
-             {% if posts %}
-                  {% for post in posts %}
+             {% if recents %}
+                  {% for recent in recents %}
                   <div class="post">
-                  {{ include ('partials/recent_post.html.twig', {'recent':post})}}
+                  {{ include ('partials/recent_post.html.twig', {'post':recent})}}
                   </div class="post">
            {% endfor %}
            {% endif %}

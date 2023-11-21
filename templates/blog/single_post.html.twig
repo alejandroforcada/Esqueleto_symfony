@@ -27,29 +27,33 @@
           <li><a href="{{ path('post_like', {slug: post.slug}) }}">LIKE</a> <i class="fa fa-heart sr-icons"></i> {{post.numLikes}}</li>
         </ul>
       </div>
-     {#
-      <div class="col-xs-12 col-sm-3">
-        <h4>Recent Post</h4>
-        <hr class="subtitle1">
-        {% for recent in recents %}
-        {{ include ('partials/recent_post.html.twig', {'recent': recent}) }}
-        {% endfor %}
-      </div>#}
       </div>
-      </div>
-    <!-- End of Full Article -->
-
-    <!-- Comments -->
-      {# <div class="row">
-      <div class="col-xs-12 col-sm-12 block2">
+      
+       <div class="row">
+      <div class="col-xs-12 col-sm-8 block2">
         {% for comment in post.comments %}
         {{ include ('partials/comment.html.twig', {'comment': comment}) }}
         {% endfor %}
           <hr class="line">
             {{ include ('partials/form_comment.html.twig') }}
           </div>
+      
+      
+      
+      <div class="col-xs-12 col-sm-3">
+        <h4>Recent Post</h4>
+        <hr class="subtitle1">
+        {% for recent in recents %}
+        {{ include ('partials/recent_post.html.twig', {'recent': recent}) }}
+        {% endfor %}
       </div>
-      </div>#}
+      
+      </div>
+      </div>
+    <!-- End of Full Article -->
+
+    <!-- Comments -->
+     
     <!-- End of Comments -->  
      </div>
       {% endif %} 
