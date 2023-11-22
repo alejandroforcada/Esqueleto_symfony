@@ -73,7 +73,7 @@
              {% if recents %}
                   {% for recent in recents %}
                   <div class="post">
-                  {{ include ('partials/recent_post.html.twig', {'post':recent})}}
+                  {{ include ('partials/recent_post.html.twig', {'recent':recent})}}
                   </div class="post">
            {% endfor %}
            {% endif %}
